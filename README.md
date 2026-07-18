@@ -6,9 +6,6 @@ Splashbracket integration meeting. It contains everything Danny needs to pull
 live 6-8 water-polo scores into his app, show a 6-8 badge, and deep-link back
 to 6-8 — the mutual-promotion arrangement discussed on the call.
 
-**Audience:** Ryan Hurst (6-8 Sports) first, as the reviewer and sender; Danny
-second, as the integrating developer.
-
 ## Recommended approach
 
 1. **Public endpoint only.** The integration uses `GET
