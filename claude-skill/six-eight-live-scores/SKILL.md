@@ -76,6 +76,17 @@ finished), so poll the in-progress set directly rather than paging the full
 history. If you do need a date-bounded historical query, use
 `created_from`/`created_to` server-side.
 
+**`schedule_date` itself is not usable, and there is no venue/location
+field.** Verified on both `in_progress` and `finished` samples: every
+populated `schedule_date` value seen is the literal placeholder
+`2000-01-01`, never a real date (known platform defect, HDC finding F13 —
+`LeverX_Findings/LeverX_Negligence.md`). The game record also has no venue,
+site, or location field at all. Do not use `schedule_date` — or a known
+game time/location from your own source data — to disambiguate which
+specific game a team played; match on the team-name pair instead (see
+below), falling back to `created_at` only as a rough, unofficial time
+proxy if the same two teams appear twice in your window.
+
 ## The server-side poller and cache pattern (and why)
 
 Poll 6-8 from the host backend, cache the trimmed result, and fan out to end
@@ -114,8 +125,8 @@ The host app will not have 6-8 team UUIDs at first, so match on team names:
   (lowercase, trim, collapse whitespace, strip punctuation) and compare against
   the host app's two team names. `matchByTeams()` in `reference/poller.js` does
   this and is order-insensitive, so it matches regardless of which side each
-  system calls dark or light. Add `schedule_date` to the comparison when it is
-  present to disambiguate a rematch.
+  system calls dark or light. Do not add `schedule_date` to disambiguate a
+  rematch — see the pitfall above, it is not real data.
 - **v2 (optional, more robust):** look up each team's UUID directly with the
   public, unauthenticated search endpoint `GET
   /api/v2/global-search/teams/?name=<term>` (`name` is **required** — omitting

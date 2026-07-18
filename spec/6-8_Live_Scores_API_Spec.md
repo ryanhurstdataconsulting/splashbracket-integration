@@ -128,6 +128,8 @@ For the live-scores use case, this rarely matters in practice: filter by `game_t
 
 **Poll the small set, not the whole history.** At probe time there were roughly 153 games in progress and about 18,643 finished. The `in_progress` set is small and cheap. Poll `game_type=in_progress`; do not poll the full finished history.
 
+**`schedule_date` is not usable, and there is no venue/location field at all.** Verified against production on both `in_progress` and `finished` samples: `schedule_date` is either `null` or the literal placeholder `2000-01-01` on every populated row seen — never a real date. This is a known 6-8 platform defect (HDC finding F13), reproduced here on the public `games/output-page/` endpoint specifically. The game record also carries no venue, site, or location field of any kind. Practically: do not use `schedule_date` to disambiguate which specific game a team played on a given day, and do not expect to match on location — match on the **team-name pair** instead (Section 6), scoped to the small `in_progress` set where possible.
+
 ---
 
 ## 5. Recommended architecture
@@ -158,8 +160,8 @@ Splashbracket will not have 6-8's team UUIDs on day one, so v1 matching is name-
 **v1 — normalized name match (recommended to start):**
 
 1. Normalize `dark_team_name` and `light_team_name` from 6-8 (lowercase, trim whitespace, collapse internal spaces, strip punctuation) and compare against your normalized team names.
-2. When `schedule_date` is present on the 6-8 record, use it as a secondary key to disambiguate two games between the same teams.
-3. Because the team pairing is unordered (dark and light are cap colors, not fixed sides), match on the **set** of two team names rather than a fixed dark-then-light order.
+2. **Do not use `schedule_date` to disambiguate.** It is unusable — see the Section 4 pitfall and [F13](../../LeverX_Findings/LeverX_Negligence.md). There is also no venue/location field on the game record, so a scheduled game's time and site (as you know them from your own source data) cannot be cross-checked against 6-8's record directly. If the same two teams play more than once in your window (a pool-play/bracket rematch), the only proxy available is `created_at` (the row's creation timestamp) compared loosely against the time you already have — it is not an official schedule field, but it is real and monotonic, unlike `schedule_date`.
+3. Because the team pairing is unordered (dark and light are cap colors, not fixed sides), match on the **set** of two team names rather than a fixed dark-then-light order. In practice, the same two teams rarely meet twice within a single `game_type` window (e.g., the current `in_progress` set), so the name-set match alone is usually unambiguous.
 
 **v2 — look up team UUIDs directly (recommended once you're ready):**
 
