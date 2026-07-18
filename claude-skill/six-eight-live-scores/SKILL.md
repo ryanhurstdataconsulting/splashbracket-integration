@@ -129,6 +129,23 @@ The host app will not have 6-8 team UUIDs at first, so match on team names:
   requires authentication (HTTP 401) — it is not a substitute for
   `global-search/teams`.
 
+### Tying a team page to its games (no server-side team filter)
+
+**Verified against production: `output-page` has no team filter.** `team_id`,
+`dark_team_id`, `light_team_id`, `team`, `dark_team`, `light_team`, and
+`teams` were all tested as query params — every one is silently ignored
+(same no-op pattern as the date-filter pitfall above), so there is no
+"give me all games for team X" call to make server-side.
+
+To reliably tie a per-team page to that team's games: look up the team's
+UUID once via `global-search/teams` (above) and store it, then for each
+game record check whether it equals `dark_team_id` or `light_team_id` —
+that client-side UUID match is what ties a game to the team page, and the
+matching game's own `pk` is the ID to use for its deep link. This is cheap
+against `game_type=in_progress` (~150 games); matching against the full
+`finished` history (~18,600 games) means paginating that whole set, so
+scope it to what the team page actually needs.
+
 ## The UI: badge and deep link back to 6-8
 
 - Show a 6-8 logo/badge next to any game that has a live score in the cache.

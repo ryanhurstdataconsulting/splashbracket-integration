@@ -191,6 +191,12 @@ Look up each of your teams once, store its 6-8 `pk` next to your own team record
 
 > **Watch out:** `/api/v2/teams/output-page/` is a different, similarly-named endpoint that requires authentication (HTTP 401). It is not a substitute for `global-search/teams` above, which is the one that's actually public.
 
+### Tying a team page to its games (no server-side team filter)
+
+**Verified against production: `output-page` has no team filter.** `team_id`, `dark_team_id`, `light_team_id`, `team`, `dark_team`, `light_team`, and `teams` were all tested as query params — every one is silently ignored (same no-op pattern as the date-filter pitfall in Section 4), so there is no "give me all games for team X" call to make server-side.
+
+To reliably tie a per-team page to that team's games: look up the team's UUID once via `global-search/teams` (above) and store it, then for each game record check whether it equals `dark_team_id` or `light_team_id` — that client-side UUID match is what ties a game to the team page, and the matching game's own `pk` is the ID to use for its deep link. This is cheap against `game_type=in_progress` (~150 games); matching against the full `finished` history (~18,600 games) means paginating that whole set, so scope it to what the team page actually needs.
+
 ---
 
 ## 7. UI integration
