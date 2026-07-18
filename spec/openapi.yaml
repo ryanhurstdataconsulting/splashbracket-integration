@@ -1,0 +1,541 @@
+openapi: 3.1.0
+info:
+  title: 6-8 Sports Live Scores (Public)
+  version: 1.0.0
+  description: >
+    Public, unauthenticated read endpoint for 6-8 Sports live and historical
+    water-polo game scores. No credentials, API key, or JWT are required —
+    this is the same endpoint that powers the public scoreboard at
+    https://scores.6-8sports.com. Consumers should poll from a single
+    server-side process and cache the result rather than polling directly
+    from end-user browsers or devices; see the `game_type=in_progress`
+    parameter description for the recommended cadence.
+  contact:
+    name: 6-8 Sports
+    url: https://scores.6-8sports.com
+
+servers:
+  - url: https://api.6-8sports.com
+
+paths:
+  /api/v2/games/output-page/:
+    get:
+      operationId: listOutputPageGames
+      summary: List games for the public output/scoreboard page
+      description: >
+        Returns a paginated list of games, optionally filtered by
+        `game_type`. This endpoint is public: no `Authorization`,
+        `X-Platform`, `X-Version`, or `X-Application` header is required
+        or accepted as a precondition.
+
+
+        Only `created_from` and `created_to` (ISO date or date-time) filter
+        by date server-side; a malformed value returns HTTP 400. Other
+        date-shaped parameters such as `created_at_after`, `start_date`,
+        and `schedule_date_after` return HTTP 200 but are silently ignored —
+        the result set is identical to an unfiltered request.
+      parameters:
+        - name: game_type
+          in: query
+          required: false
+          description: >
+            Filters the result set by game status. One of `in_progress`,
+            `finished`, or `upcoming`. For a live-scores integration,
+            poll `game_type=in_progress` only — it is a small, cheap set
+            (roughly 150 games at a given time, versus roughly 18,000+
+            for `finished`). Recommended cadence is a single server-side
+            poller fetching every 15-30 seconds while games are live, and
+            not polling at all when none are live; a shared short-TTL
+            cache then serves all downstream consumers so the 6-8
+            database sees one client rather than many.
+          schema:
+            type: string
+            enum:
+              - in_progress
+              - finished
+              - upcoming
+        - name: limit
+          in: query
+          required: false
+          description: Page size — the maximum number of games to return in one response.
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          required: false
+          description: >
+            Pagination offset, in number of records. Verified to page
+            correctly (an `offset=0` request and an `offset=5` request
+            return different records).
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A paginated list of games.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutputPageResponse"
+              example:
+                count: 153
+                next: null
+                previous: null
+                results:
+                  - pk: "18fb32b5-4ab8-4073-87f0-8fc406e63f08"
+                    name: "6-8 Academy: 7/17 Boys Scrimmag"
+                    in_progress: true
+                    created_at: "2026-07-17T17:15:11Z"
+                    schedule_date: null
+                    schedule_time: null
+                    dark_team_avatar: "https://media.newprod.6-8sports.com/avatars/561bcd15-b889-4c27-9483-ccbb51431021/avatar-6.png"
+                    light_team_avatar: "https://media.newprod.6-8sports.com/avatars/561bcd15-b889-4c27-9483-ccbb51431021/avatar-6.png"
+                    performance_coefficients:
+                      goal_points: 1.0
+                      assist_points: 0.9
+                      steal_points: 0.65
+                      block_points: 0.8
+                      exclusion_points: -0.7
+                      earned_exclusion_points: 0.9
+                      turnover_points: -0.9
+                      goals_allowed_points: -0.55
+                      penalty_save_points: 0.7
+                    dark_team_score: 21
+                    light_team_score: 22
+                    dark_team_id: "4f0206ae-652f-460c-b0e7-0c43c6be04b4"
+                    dark_team_name: "6-8 Summer Academy: 2026"
+                    light_team_id: "4f0206ae-652f-460c-b0e7-0c43c6be04b4"
+                    light_team_name: "6-8 Summer Academy: 2026"
+                    referee_one: null
+                    referee_two: null
+                    is_shared: true
+                    players:
+                      - pk: "00a18908-30d1-4d72-bde9-5bf52a54fef2"
+                        team_color: "Dark Team"
+                        first_name: "Lena"
+                        last_name: "McLaughlin"
+                        number: "29"
+                        player: "6f732c12-c74a-4ba9-ba32-d827f49e0933"
+                        athlete: 9355
+                        avatar: null
+                        performance: 0
+                        is_active: true
+                        is_captain: false
+                        is_goalie: false
+                        is_staff: false
+                        in_water: false
+                        was_in_water_once: true
+                        athlete_position: "Attacker"
+                        use_athlete_name: true
+                    history:
+                      goals:
+                        - pk: "fcd536d9-1843-4695-bcae-d6ee80fd7375"
+                          type: "Goal"
+                          datetime: "2026-07-17T17:33:30Z"
+                          team_color: "Light Team"
+                          player: "a66c0505-36b8-47a2-8ed6-a00b20abe4d3"
+                          quarter: "Period 1"
+                      assists: []
+                    synced: false
+                    device_id: "cb1c1a66-69a9-43fa-afee-462dc064e88a"
+                    note: ""
+                    note_reason: ""
+
+  /api/v2/global-search/teams/:
+    get:
+      operationId: searchTeams
+      summary: Look up 6-8 team UUIDs by name
+      description: >
+        Public, unauthenticated case-insensitive substring search over team
+        names. Use this to build a team-ID map from your own teams to 6-8's
+        `dark_team_id` / `light_team_id` (the `pk` returned here is the same
+        UUID). `name` is required — omitting it returns HTTP 500, not an
+        empty result. Team names are not guaranteed unique; confirm the
+        correct `pk` per team rather than auto-selecting the first match.
+
+
+        Note: `/api/v2/teams/output-page/` is a different, similarly-named
+        endpoint that requires authentication (HTTP 401) and is not a
+        substitute for this one.
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Search term, matched case-insensitively as a substring of the team name. Required — a request without it returns HTTP 500.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          description: Page size — the maximum number of teams to return in one response.
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          required: false
+          description: Pagination offset, in number of records.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A paginated list of matching teams.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeamSearchResponse"
+              example:
+                count: 17
+                next:
+                  limit: 5
+                  offset: 5
+                previous: null
+                results:
+                  - pk: "47185e45-cd62-404f-b143-69264110051b"
+                    name: "6-8 Fall Academy - 2024"
+                    avatar: null
+                  - pk: "08273e20-190d-4264-b839-e6a3ed4eb1f7"
+                    name: "6-8 Academy Athletes Fall"
+                    avatar: null
+                  - pk: "069ccbb0-b513-4ec9-b852-7f6d40769978"
+                    name: "White Team- Academy S3"
+                    avatar: null
+        "500":
+          description: Returned when `name` is omitted. Always send a non-empty `name`.
+
+components:
+  schemas:
+    TeamSearchResponse:
+      type: object
+      description: Paginated envelope wrapping a page of `TeamSearchResult` records.
+      required:
+        - count
+        - next
+        - previous
+        - results
+      properties:
+        count:
+          type: integer
+          description: Total number of teams matching `name`, across all pages.
+        next:
+          type: object
+          nullable: true
+          description: Cursor for the next page, or null if this is the last page.
+          properties:
+            limit:
+              type: integer
+            offset:
+              type: integer
+        previous:
+          type: object
+          nullable: true
+          description: >
+            Cursor for the previous page, or null if this is the first page.
+            Known 6-8 bug: in practice this mirrors `next`'s forward offset
+            rather than pointing backward — do not rely on it.
+          properties:
+            limit:
+              type: integer
+            offset:
+              type: integer
+        results:
+          type: array
+          description: The page of teams returned by this request.
+          items:
+            $ref: "#/components/schemas/TeamSearchResult"
+
+    TeamSearchResult:
+      type: object
+      description: A single team matched by the search.
+      properties:
+        pk:
+          type: string
+          format: uuid
+          description: 6-8 team identifier — the same UUID that appears as `dark_team_id` / `light_team_id` on a `Game` record.
+        name:
+          type: string
+          description: Team display name.
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+          description: URL of the team's logo/avatar image, or null if unset.
+      required:
+        - pk
+        - name
+    OutputPageResponse:
+      type: object
+      description: Paginated envelope wrapping a page of `Game` records.
+      required:
+        - count
+        - next
+        - previous
+        - results
+      properties:
+        count:
+          type: integer
+          description: Total number of games matching the request across all pages.
+        next:
+          type: object
+          nullable: true
+          description: Cursor for the next page, or null if this is the last page.
+          properties:
+            limit:
+              type: integer
+            offset:
+              type: integer
+        previous:
+          type: object
+          nullable: true
+          description: >
+            Cursor for the previous page, or null if this is the first page.
+            Known 6-8 bug: in practice this mirrors `next`'s forward offset
+            rather than pointing backward — do not rely on it.
+          properties:
+            limit:
+              type: integer
+            offset:
+              type: integer
+        results:
+          type: array
+          description: The page of games returned by this request.
+          items:
+            $ref: "#/components/schemas/Game"
+
+    Game:
+      type: object
+      description: A single water-polo game record, live or historical.
+      properties:
+        pk:
+          type: string
+          format: uuid
+          description: Unique game identifier — use this for de-duplication and as the game key when linking back to 6-8.
+        name:
+          type: string
+          description: 'Game name as entered at the source; may be truncated (e.g. "6-8 Academy: 7/17 Boys Scrimmag").'
+        in_progress:
+          type: boolean
+          description: True if the game is live right now.
+        created_at:
+          type: string
+          format: date-time
+          description: ISO 8601 UTC timestamp of when the game record was created.
+        schedule_date:
+          type: string
+          format: date
+          nullable: true
+          description: Scheduled date of the game, or null if not scheduled/unset.
+        schedule_time:
+          type: string
+          nullable: true
+          description: Scheduled time of the game, or null if not scheduled/unset.
+        dark_team_avatar:
+          type: string
+          format: uri
+          description: URL of the dark-cap team's logo/avatar image.
+        light_team_avatar:
+          type: string
+          format: uri
+          description: URL of the light-cap team's logo/avatar image.
+        performance_coefficients:
+          type: object
+          description: Per-event scoring weights used to compute player performance for this game; not needed for a simple score badge.
+          properties:
+            goal_points:
+              type: number
+              description: Weight applied per goal.
+            assist_points:
+              type: number
+              description: Weight applied per assist.
+            steal_points:
+              type: number
+              description: Weight applied per steal.
+            block_points:
+              type: number
+              description: Weight applied per block.
+            exclusion_points:
+              type: number
+              description: Weight applied per exclusion drawn against the player.
+            earned_exclusion_points:
+              type: number
+              description: Weight applied per exclusion earned by the player.
+            turnover_points:
+              type: number
+              description: Weight applied per turnover.
+            goals_allowed_points:
+              type: number
+              description: Weight applied per goal allowed (goalie).
+            penalty_save_points:
+              type: number
+              description: Weight applied per penalty shot saved (goalie).
+        dark_team_score:
+          type: integer
+          description: Live/final score for the dark-cap team.
+        light_team_score:
+          type: integer
+          description: Live/final score for the light-cap team.
+        dark_team_id:
+          type: string
+          format: uuid
+          description: 6-8 team identifier for the dark-cap team.
+        dark_team_name:
+          type: string
+          description: Display name of the dark-cap team.
+        light_team_id:
+          type: string
+          format: uuid
+          description: 6-8 team identifier for the light-cap team.
+        light_team_name:
+          type: string
+          description: Display name of the light-cap team.
+        referee_one:
+          type: string
+          nullable: true
+          description: Name of the first referee, or null if unassigned.
+        referee_two:
+          type: string
+          nullable: true
+          description: Name of the second referee, or null if unassigned.
+        is_shared:
+          type: boolean
+          description: Whether the game has been shared/published for public visibility.
+        players:
+          type: array
+          description: Roster and per-player stats for both teams; large — typically skip this for a score-badge integration.
+          items:
+            $ref: "#/components/schemas/Player"
+        history:
+          type: object
+          description: >
+            Play-by-play event buckets keyed by event category (e.g.
+            `goals`, `assists`, `blocks`, `exclusions`, `steals`,
+            `turn_over`, `time_out`). Each bucket is an array of event
+            objects; this is the deeper detail that justifies a deep
+            link back into 6-8 for a full play-by-play view.
+          additionalProperties:
+            type: array
+            items:
+              $ref: "#/components/schemas/HistoryEvent"
+        synced:
+          type: boolean
+          description: Whether the game record has finished syncing from the recording device.
+        device_id:
+          type: string
+          description: Identifier of the device that recorded/submitted the game.
+        note:
+          type: string
+          nullable: true
+          description: Free-text note on the game, or null/empty if none.
+        note_reason:
+          type: string
+          nullable: true
+          description: Reason code or free-text associated with `note`, or null/empty if none.
+      required:
+        - pk
+        - name
+        - in_progress
+        - dark_team_score
+        - light_team_score
+        - dark_team_id
+        - dark_team_name
+        - light_team_id
+        - light_team_name
+
+    Player:
+      type: object
+      description: A single roster entry with per-player stats for a game.
+      properties:
+        pk:
+          type: string
+          format: uuid
+          description: Unique identifier for this roster entry.
+        team_color:
+          type: string
+          description: Which team this player belongs to — "Dark Team" or "Light Team".
+        first_name:
+          type: string
+          description: Player's first name.
+        last_name:
+          type: string
+          description: Player's last name.
+        number:
+          type: string
+          description: Player's cap number as displayed (may include a goalie suffix such as "1G").
+        player:
+          type: string
+          format: uuid
+          description: 6-8 player identifier referenced by history events.
+        athlete:
+          type: integer
+          description: 6-8 athlete identifier for this player.
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+          description: URL of the player's avatar image, or null if unset.
+        performance:
+          type: number
+          description: Computed performance score for this player in this game.
+        is_active:
+          type: boolean
+          description: Whether the player is active on the roster for this game.
+        is_captain:
+          type: boolean
+          description: Whether the player is the team captain.
+        is_goalie:
+          type: boolean
+          description: Whether the player is a goalie.
+        is_staff:
+          type: boolean
+          description: Whether the roster entry represents staff rather than a playing athlete.
+        in_water:
+          type: boolean
+          description: Whether the player is currently in the water.
+        was_in_water_once:
+          type: boolean
+          description: Whether the player has entered the water at least once during the game.
+        athlete_position:
+          type: string
+          description: Player's position (e.g. "Attacker", "Goalie").
+        use_athlete_name:
+          type: boolean
+          description: Whether the athlete's registered name should be displayed instead of a manually entered name.
+
+    HistoryEvent:
+      type: object
+      description: >
+        A single play-by-play event within a `history` bucket. Fields
+        beyond the common set below vary by event type (e.g. goal events
+        additionally carry `dark_team_score`/`light_team_score`); this
+        schema documents the common fields observed across event types.
+      properties:
+        pk:
+          type: string
+          format: uuid
+          description: Unique identifier for this event.
+        type:
+          type: string
+          description: Human-readable event type (e.g. "Goal", "Assist", "Block", "Steal").
+        datetime:
+          type: string
+          format: date-time
+          description: ISO 8601 UTC timestamp of when the event occurred.
+        team_color:
+          type: string
+          description: Team the event is attributed to — "Dark Team" or "Light Team".
+        player:
+          type: string
+          format: uuid
+          nullable: true
+          description: UUID of the player the event is attributed to, matching a `Player.player` value; null for clock/whistle events with no attributed player.
+        quarter:
+          type: string
+          description: Game period the event occurred in (e.g. "Period 1").
+        note:
+          type: string
+          nullable: true
+          description: Free-text note on the event, or null/empty if none.
+      additionalProperties: true
+      required:
+        - pk
+        - type
+        - datetime
+        - team_color

@@ -1,0 +1,339 @@
+{
+  "count": 153,
+  "next": {
+    "limit": 1,
+    "offset": 1
+  },
+  "previous": null,
+  "results": [
+    {
+      "pk": "18fb32b5-4ab8-4073-87f0-8fc406e63f08",
+      "name": "6-8 Academy: 7/17 Boys Scrimmag",
+      "in_progress": true,
+      "created_at": "2026-07-17T17:15:11Z",
+      "schedule_date": null,
+      "schedule_time": null,
+      "dark_team_avatar": "https://media.newprod.6-8sports.com/avatars/561bcd15-b889-4c27-9483-ccbb51431021/avatar-6.png",
+      "light_team_avatar": "https://media.newprod.6-8sports.com/avatars/561bcd15-b889-4c27-9483-ccbb51431021/avatar-6.png",
+      "performance_coefficients": {
+        "goal_points": 1.0,
+        "assist_points": 0.9,
+        "steal_points": 0.65,
+        "block_points": 0.8,
+        "exclusion_points": -0.7,
+        "earned_exclusion_points": 0.9,
+        "turnover_points": -0.9,
+        "goals_allowed_points": -0.55,
+        "penalty_save_points": 0.7
+      },
+      "dark_team_score": 21,
+      "light_team_score": 22,
+      "dark_team_id": "4f0206ae-652f-460c-b0e7-0c43c6be04b4",
+      "dark_team_name": "6-8 Summer Academy: 2026",
+      "light_team_id": "4f0206ae-652f-460c-b0e7-0c43c6be04b4",
+      "light_team_name": "6-8 Summer Academy: 2026",
+      "referee_one": null,
+      "referee_two": null,
+      "is_shared": true,
+      "players": [
+        {
+          "pk": "00a18908-30d1-4d72-bde9-5bf52a54fef2",
+          "team_color": "Dark Team",
+          "first_name": "Lena",
+          "last_name": "McLaughlin",
+          "number": "29",
+          "player": "6f732c12-c74a-4ba9-ba32-d827f49e0933",
+          "athlete": 9355,
+          "avatar": null,
+          "performance": 0,
+          "is_active": true,
+          "is_captain": false,
+          "is_goalie": false,
+          "is_staff": false,
+          "in_water": false,
+          "was_in_water_once": true,
+          "athlete_position": "Attacker",
+          "use_athlete_name": true
+        },
+        {
+          "pk": "07890088-2553-410d-a6b4-18737da4e7c7",
+          "team_color": "Dark Team",
+          "first_name": "Audrey",
+          "last_name": "LaPlant",
+          "number": "1G",
+          "player": "31b4676f-e4ba-49ea-8646-08bb6c1fe5f8",
+          "athlete": 9291,
+          "avatar": null,
+          "performance": 0,
+          "is_active": true,
+          "is_captain": false,
+          "is_goalie": true,
+          "is_staff": false,
+          "in_water": false,
+          "was_in_water_once": false,
+          "athlete_position": "Goalie",
+          "use_athlete_name": true
+        },
+        {
+          "_note": "... 51 more players omitted for brevity"
+        }
+      ],
+      "history": {
+        "assists": [
+          {
+            "pk": "aaa26804-67fd-44b4-bc47-4e84d379144e",
+            "type": "Assist",
+            "datetime": "2026-07-17T17:33:56Z",
+            "team_color": "Light Team",
+            "player": "d99c0f67-47f1-4a2d-9674-e7ad267dbfbe",
+            "quarter": "Period 1",
+            "water_position": "",
+            "on_6_5": false,
+            "on_7_6": false,
+            "on_6_4": false,
+            "penalty": false,
+            "natural": false,
+            "counter": false,
+            "note": null
+          },
+          {
+            "_note": "... 20 more assists events omitted"
+          }
+        ],
+        "blocks": [
+          {
+            "pk": "74349462-b3df-407a-9e55-0ca696177619",
+            "type": "Block",
+            "datetime": "2026-07-17T17:32:38Z",
+            "team_color": "Light Team",
+            "player": "add24621-d14b-415d-9672-36bb9ef585c4",
+            "quarter": "Period 1",
+            "water_position": "",
+            "on_6_5": false,
+            "on_7_6": false,
+            "on_6_4": false,
+            "penalty": false,
+            "natural": false,
+            "counter": false,
+            "note": null
+          },
+          {
+            "_note": "... 28 more blocks events omitted"
+          }
+        ],
+        "start_clock": [],
+        "stop_clock": [],
+        "earned_exclusions": [
+          {
+            "pk": "dc5deca8-9e15-44a1-946c-a09999444db3",
+            "type": "Earned Exclusion",
+            "datetime": "2026-07-17T17:32:24Z",
+            "team_color": "Dark Team",
+            "player": "408c13cc-25c7-4de5-8cf5-af965892a842",
+            "quarter": "Period 1",
+            "water_position": "",
+            "play_time": null,
+            "penalty": false,
+            "note": ""
+          },
+          {
+            "_note": "... 15 more earned_exclusions events omitted"
+          }
+        ],
+        "exclusions": [
+          {
+            "pk": "3edcc0ec-ef72-440a-b995-dd0e3f02d871",
+            "type": "Exclusion",
+            "datetime": "2026-07-17T17:32:24Z",
+            "team_color": "Light Team",
+            "player": "a66c0505-36b8-47a2-8ed6-a00b20abe4d3",
+            "quarter": "Period 1",
+            "play_time": null,
+            "on_6_5": false,
+            "on_7_6": false,
+            "on_6_4": false,
+            "penalty": false,
+            "natural": false,
+            "counter": false,
+            "water_position": "",
+            "note": "",
+            "brutality": false,
+            "misconduct": false,
+            "e_game": false
+          },
+          {
+            "_note": "... 16 more exclusions events omitted"
+          }
+        ],
+        "goals": [
+          {
+            "pk": "fcd536d9-1843-4695-bcae-d6ee80fd7375",
+            "type": "Goal",
+            "datetime": "2026-07-17T17:33:30Z",
+            "team_color": "Light Team",
+            "player": "a66c0505-36b8-47a2-8ed6-a00b20abe4d3",
+            "quarter": "Period 1",
+            "play_time": null,
+            "on_6_5": false,
+            "on_7_6": false,
+            "on_6_4": false,
+            "penalty": false,
+            "natural": false,
+            "counter": true,
+            "gates_position": "",
+            "water_position": "",
+            "note": null,
+            "dark_team_score": 0,
+            "light_team_score": 1,
+            "goal_allowed": [
+              "269e3319-eaa3-4150-8b0a-61e99a95d1ac"
+            ]
+          },
+          {
+            "_note": "... 42 more goals events omitted"
+          }
+        ],
+        "offensives": [
+          {
+            "pk": "3cf253eb-b6c4-402d-b5f0-4049dd0d4dfb",
+            "type": "Offensive",
+            "datetime": "2026-07-17T17:34:54Z",
+            "team_color": "Dark Team",
+            "player": "408c13cc-25c7-4de5-8cf5-af965892a842",
+            "quarter": "Period 1",
+            "note": null
+          },
+          {
+            "_note": "... 2 more offensives events omitted"
+          }
+        ],
+        "penalties": [
+          {
+            "pk": "16287142-432c-4062-825f-8a4b32aca916",
+            "type": "Penalty",
+            "datetime": "2026-07-17T17:35:52Z",
+            "team_color": "Light Team",
+            "player": "a05153bb-60b1-4fc3-9e5e-c81cda959d94",
+            "quarter": "Period 1",
+            "play_time": null,
+            "water_position": "",
+            "note": ""
+          },
+          {
+            "_note": "... 5 more penalties events omitted"
+          }
+        ],
+        "earned_penalties": [
+          {
+            "pk": "bf679a6b-c5df-47f4-b265-eb9b7e70c54c",
+            "type": "Earned Penalty",
+            "datetime": "2026-07-17T17:35:52Z",
+            "team_color": "Dark Team",
+            "player": "408c13cc-25c7-4de5-8cf5-af965892a842",
+            "quarter": "Period 1",
+            "play_time": null,
+            "water_position": "",
+            "note": ""
+          },
+          {
+            "_note": "... 5 more earned_penalties events omitted"
+          }
+        ],
+        "possessions": [],
+        "missed_shots": [
+          {
+            "pk": "ac6af6e3-e32f-4fb3-9fc7-787f624f0306",
+            "type": "Missed Shot",
+            "datetime": "2026-07-17T17:32:37Z",
+            "team_color": "Dark Team",
+            "player": "408c13cc-25c7-4de5-8cf5-af965892a842",
+            "quarter": "Period 1",
+            "gates_position": "",
+            "water_position": "",
+            "note": null
+          },
+          {
+            "_note": "... 44 more missed_shots events omitted"
+          }
+        ],
+        "sub_in": [],
+        "sub_out": [],
+        "goalie_sub_in": [],
+        "goalie_sub_out": [],
+        "sprint_start": [
+          {
+            "pk": "3483ea36-78a3-4a9d-b8f2-2377b795b0c0",
+            "type": "Sprint Start",
+            "datetime": "2026-07-17T17:32:11Z",
+            "team_color": "Dark Team",
+            "quarter": "Period 1",
+            "note": "",
+            "winner": "cfb94bc0-8d4a-478e-9353-7cef9fd25212",
+            "loser": "5ae1c422-ab61-4f87-8bac-b862767528f5"
+          },
+          {
+            "_note": "... 3 more sprint_start events omitted"
+          }
+        ],
+        "steals": [
+          {
+            "pk": "cb819c76-63e1-49e8-8806-65e87bb84db5",
+            "type": "Steal",
+            "datetime": "2026-07-17T17:33:23Z",
+            "team_color": "Light Team",
+            "player": "080b8246-4ffe-40de-8267-b748d1c0e358",
+            "quarter": "Period 1",
+            "water_position": "",
+            "note": null
+          },
+          {
+            "_note": "... 29 more steals events omitted"
+          }
+        ],
+        "time_out": [
+          {
+            "pk": "50b5f848-e917-4f4c-923f-f12544e10682",
+            "type": "Time Out",
+            "datetime": "2026-07-17T18:36:09Z",
+            "team_color": "Dark Team",
+            "quarter": "Period 4",
+            "play_time": null,
+            "on_6_5": false,
+            "on_7_6": false,
+            "on_6_4": false,
+            "penalty": false,
+            "natural": false,
+            "counter": false,
+            "note": null,
+            "time_out": "Full"
+          }
+        ],
+        "team_turnovers": [],
+        "turn_over": [
+          {
+            "pk": "dbb26cb1-43fe-4ce0-94de-b9efd8bf4349",
+            "type": "Turn Over",
+            "datetime": "2026-07-17T17:33:05Z",
+            "team_color": "Light Team",
+            "player": "5ae1c422-ab61-4f87-8bac-b862767528f5",
+            "quarter": "Period 1",
+            "play_time": null,
+            "water_position": "",
+            "note": null
+          },
+          {
+            "_note": "... 33 more turn_over events omitted"
+          }
+        ],
+        "yellow_cards": [],
+        "red_cards": [],
+        "yellow_red_cards": [],
+        "goalie_substitutions": []
+      },
+      "synced": false,
+      "device_id": "cb1c1a66-69a9-43fa-afee-462dc064e88a",
+      "note": "",
+      "note_reason": ""
+    }
+  ]
+}
